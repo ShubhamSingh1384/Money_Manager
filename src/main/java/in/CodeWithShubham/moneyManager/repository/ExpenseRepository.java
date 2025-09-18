@@ -11,6 +11,7 @@ import org.springframework.security.core.parameters.P;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
@@ -37,4 +38,5 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
 
     //select * from tbl_expenses where profile_id = ?1 and date = ?2
     List<ExpenseEntity> findByProfileIdAndDate(Long profileId, LocalDate date);
+
 }
