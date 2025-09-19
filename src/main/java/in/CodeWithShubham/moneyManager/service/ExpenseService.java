@@ -8,6 +8,8 @@ import in.CodeWithShubham.moneyManager.repository.CategoryRepository;
 import in.CodeWithShubham.moneyManager.repository.ExpenseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -70,6 +72,19 @@ public class ExpenseService {
         return total != null ? total: BigDecimal.ZERO;
     }
 
+    // filter expense
+    public List<ExpenseDTO> filterExpenses(LocalDate startDate, LocalDate endDate, String keyword, Sort sort){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(profile.getId(), startDate, endDate, keyword, sort);
+
+        return list.stream().map(this::toDTO).toList();
+    }
+
+    // Notification
+    public List<ExpenseDTO> getExpensesForUserOnDate(Long profileId, LocalDate date) {
+        List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDate(profileId, date);
+        return list.stream().map(this::toDTO).toList();
+    }
     // helper function
 
     public ExpenseEntity toEntity(ExpenseDTO dto, ProfileEntity profile, CategoryEntity category){
