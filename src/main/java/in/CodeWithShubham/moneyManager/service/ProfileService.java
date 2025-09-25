@@ -7,6 +7,7 @@ import in.CodeWithShubham.moneyManager.repository.ProfileRepository;
 import in.CodeWithShubham.moneyManager.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,9 @@ public class ProfileService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    @Value("${app.activation.url}")
+    private String activationURL;
+
     @Transactional
     public ProfileDTO registerProfile(ProfileDTO profileDTO){
         ProfileEntity newProfile = toEntity(profileDTO);
@@ -36,7 +40,7 @@ public class ProfileService {
         newProfile = profileRepository.save(newProfile);
 
         // send activation email
-        String activationLink = "http://localhost:8080/api/activate?token=" + newProfile.getActivationToken();
+        String activationLink = activationURL + "/api/activate?token=" + newProfile.getActivationToken();
         String subject = "Activate your Money Manager account";
         String  body = "Click on the following link to activate your account : " + activationLink;
         emailService.sentEmail(newProfile.getEmail(), subject, body);
